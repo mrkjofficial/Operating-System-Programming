@@ -1,1 +1,1 @@
-/* Implementation of C-Look Disk Scheduling Algorithm */
+/* Implementation of Look Disk Scheduling Algorithm */

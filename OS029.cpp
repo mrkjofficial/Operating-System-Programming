@@ -1,1 +1,1 @@
-/* Implementation of Scan (Elevator) Disk Scheduling Algorithm */
+/* Implementation of Shortest Seek Time First Disk Scheduling Algorithm */

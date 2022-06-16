@@ -11,7 +11,7 @@ Frames: 4
 #include <algorithm>
 using namespace std;
 
-void lru(vector<int> &, vector<int> &, int, int);
+void mru(vector<int> &, vector<int> &, int, int);
 
 int main()
 {
@@ -30,10 +30,10 @@ int main()
     cin >> frameCount;
     cout << endl;
     vector<int> frames(frameCount, INT_MIN);
-    lru(pages, frames, pageCount, frameCount);
+    mru(pages, frames, pageCount, frameCount);
 }
 
-void lru(vector<int> &pages, vector<int> &frames, int pageCount, int frameCount)
+void mru(vector<int> &pages, vector<int> &frames, int pageCount, int frameCount)
 {
     int pageFaults = 0, pageHits = 0;
     for (int i = 0; i < pageCount; i++)

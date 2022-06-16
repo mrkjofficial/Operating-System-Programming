@@ -1,1 +1,1 @@
-/* Implementation of Shortest Seek Time First Disk Scheduling Algorithm */
+/* Implementation of First Come First Serve Disk Scheduling Algorithm */

@@ -1,1 +1,1 @@
-/* Implementation of Look Disk Scheduling Algorithm */
+/* Implementation of C-Scan (Circular-Elevator) Disk Scheduling Algorithm */

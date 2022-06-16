@@ -1,1 +1,1 @@
-/* Implementation of C-Scan (Circular-Elevator) Disk Scheduling Algorithm */
+/* Implementation of Scan (Elevator) Disk Scheduling Algorithm */
