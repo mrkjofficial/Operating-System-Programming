@@ -52,14 +52,16 @@
 
 #### 26. Implementation of Least Recently Used Page Replacement Algorithm
 
-#### 27. Implementation of First Come First Serve Disk Scheduling Algorithm
+#### 27. Implementation of Most Recently Used Page Replacement Algorithm
 
-#### 28. Implementation of Shortest Seek Time First Disk Scheduling Algorithm
+#### 28. Implementation of First Come First Serve Disk Scheduling Algorithm
 
-#### 29. Implementation of Scan (Elevator) Disk Scheduling Algorithm
+#### 29. Implementation of Shortest Seek Time First Disk Scheduling Algorithm
 
-#### 30. Implementation of C-Scan (Circular-Elevator) Disk Scheduling Algorithm
+#### 30. Implementation of Scan (Elevator) Disk Scheduling Algorithm
 
-#### 31. Implementation of Look Disk Scheduling Algorithm
+#### 31. Implementation of C-Scan (Circular-Elevator) Disk Scheduling Algorithm
 
-#### 32. Implementation of C-Look Disk Scheduling Algorithm
+#### 32. Implementation of Look Disk Scheduling Algorithm
+
+#### 33. Implementation of C-Look Disk Scheduling Algorithm
