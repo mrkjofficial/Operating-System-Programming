@@ -5,10 +5,13 @@ Requests: 82 170 43 140 24 16 190
 Head: 50
 */
 
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <iterator>
+#define DISKSIZE 200
 using namespace std;
 
-void fcfs(vector<int> &, int, int);
+void sstf(vector<int> &, int, int);
 
 int main()
 {
@@ -26,21 +29,19 @@ int main()
     cout << "Enter the R/W Head Position: ";
     cin >> head;
     cout << endl;
-    fcfs(rQueue, head, reqCount);
+    sstf(rQueue, head, reqCount);
 }
 
-void fcfs(vector<int> &rQueue, int head, int reqCount)
+void sstf(vector<int> &rQueue, int head, int reqCount)
 {
-    int seekTime = 0;
-    int curTrack;
-
+    int seekCount = 0, curTrack;
     for (int i = 0; i < reqCount; i++)
     {
         curTrack = rQueue[i];
-        seekTime += abs(curTrack - head);
+        seekCount += abs(curTrack - head);
         head = curTrack;
     }
-    cout << "Seek Time: " << seekTime << endl;
+    cout << "Seek Movements: " << seekCount << endl;
     cout << "Seek Sequence: ";
     copy(rQueue.begin(), rQueue.end(), ostream_iterator<int>(cout, " "));
 }
