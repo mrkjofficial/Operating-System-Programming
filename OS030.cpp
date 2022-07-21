@@ -1,4 +1,4 @@
-/* Implementation of Scan (Elevator) Disk Scheduling Algorithm
+/* Implementation of Look Disk Scheduling Algorithm
 
 Sample Input
 Requests: 82 170 43 140 24 16 190
@@ -12,7 +12,7 @@ Head: 50
 #define DISKSIZE 200
 using namespace std;
 
-void scan(vector<int> &, int, int, char);
+void look(vector<int> &, int, int, char);
 
 int main()
 {
@@ -34,21 +34,13 @@ int main()
 	cout << "Enter Direction (L/R): ";
 	cin >> direction;
 	cout << endl;
-	scan(rQueue, head, reqCount, direction);
+	look(rQueue, head, reqCount, direction);
 }
 
-void scan(vector<int> &rQueue, int head, int reqCount, char direction)
+void look(vector<int> &rQueue, int head, int reqCount, char direction)
 {
 	int seekCount = 0, curTrack;
 	vector<int> left, right, seekSequence;
-	if (toupper(direction) == 'L')
-	{
-		left.push_back(0);
-	}
-	if (toupper(direction) == 'R')
-	{
-		right.push_back(DISKSIZE - 1);
-	}
 	for (int i = 0; i < reqCount; i++)
 	{
 		if (rQueue[i] < head)

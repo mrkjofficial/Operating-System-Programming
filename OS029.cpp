@@ -1,4 +1,4 @@
-/* Implementation of Shortest Seek Time First Disk Scheduling Algorithm
+/* Implementation of C-Scan (Circular-Elevator) Disk Scheduling Algorithm
 
 Sample Input
 Requests: 82 170 43 140 24 16 190
@@ -12,7 +12,7 @@ Head: 50
 #define DISKSIZE 200
 using namespace std;
 
-void sstf(vector<int> &, int, int);
+void cscan(vector<int> &, int, int);
 
 int main()
 {
@@ -30,28 +30,42 @@ int main()
 	cout << "Enter the R/W Head Position: ";
 	cin >> head;
 	cout << endl;
-	sstf(rQueue, head, reqCount);
+	cscan(rQueue, head, reqCount);
 }
 
-void sstf(vector<int> &rQueue, int head, int reqCount)
+void cscan(vector<int> &rQueue, int head, int reqCount)
 {
 	int seekCount = 0, curTrack;
-	vector<int> seekSequence;
+	vector<int> left, right, seekSequence;
+	left.push_back(0);
+	right.push_back(DISKSIZE - 1);
 	for (int i = 0; i < reqCount; i++)
 	{
-		int mDistance = INT_MAX, mIndex = 0;
-		for (int j = 0; j < reqCount; j++)
+		if (rQueue[i] < head)
 		{
-			if (abs(head - rQueue[j]) <= mDistance)
-			{
-				mDistance = abs(head - rQueue[j]);
-				mIndex = j;
-			}
+			left.push_back(rQueue[i]);
 		}
-		curTrack = rQueue[mIndex];
-		rQueue[mIndex] = INT_MIN;
-		seekCount += mDistance;
+		if (rQueue[i] > head)
+		{
+			right.push_back(rQueue[i]);
+		}
+	}
+	std::sort(left.begin(), left.end());
+	std::sort(right.begin(), right.end());
+	for (int i = 0; i < right.size(); i++)
+	{
+		curTrack = right[i];
 		seekSequence.push_back(curTrack);
+		seekCount += abs(curTrack - head);
+		head = curTrack;
+	}
+	head = 0;
+	seekCount += (DISKSIZE - 1);
+	for (int i = 0; i < left.size(); i++)
+	{
+		curTrack = left[i];
+		seekSequence.push_back(curTrack);
+		seekCount += abs(curTrack - head);
 		head = curTrack;
 	}
 	cout << "Seek Movements: " << seekCount << endl;

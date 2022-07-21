@@ -1,4 +1,4 @@
-/* Implementation of Priority Scheduling Algorithm (Preemptive)
+/* Implementation of Priority Scheduling Algorithm (Pre-emptive)
 
 Sample Input
 P0: 1 0 5

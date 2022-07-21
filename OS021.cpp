@@ -1,4 +1,4 @@
-/* Implementation of First Fit Memory Allocation Algorithm
+/* Implementation of Worst Fit Memory Allocation Algorithm
 
 Sample Input
 Holes: 100 500 200 300 600
@@ -15,7 +15,7 @@ vector<int> procs;
 
 void getHoles(int);
 void getProcs(int);
-void firstFit(int, int);
+void worstFit(int, int);
 
 int main()
 {
@@ -30,7 +30,7 @@ int main()
     cout << endl;
     getProcs(proCount);
     cout << endl;
-    firstFit(holeCount, proCount);
+    worstFit(holeCount, proCount);
 }
 
 void getHoles(int holeCount)
@@ -55,28 +55,33 @@ void getProcs(int proCount)
     }
 }
 
-void firstFit(int holeCount, int proCount)
+void worstFit(int holeCount, int proCount)
 {
     int extFrag = 0, intFrag = 0;
     vector<bool> loaded(proCount, false);
     cout << "Process\t\tSize\t\tHole\t\tLeft Space" << endl;
     for (int i = 0; i < proCount; i++)
     {
-        for (int j = 0; j < holeCount; j++)
+        int difference = INT_MIN, index;
+        for (int j = 0; j < holes.size(); j++)
         {
-            if (procs[i] <= holes[j])
+            if (holes[j] - procs[i] > difference && holes[j] - procs[i] >= 0)
             {
-                holes[j] -= procs[i];
-                intFrag += holes[j];
-                cout << "P" << i << "\t\t" << procs[i] << "\t\t" << j << "\t\t" << holes[j] << endl;
-                loaded[i] = true;
-                break;
+                difference = holes[j] - procs[i];
+                index = j;
             }
         }
-        if (!loaded[i])
+        if (difference == INT_MIN)
         {
             extFrag += procs[i];
             cout << "P" << i << "\t\t" << procs[i] << "\t\t" << "Not Allocated!" << endl;
+        }
+        else
+        {
+            holes[index] -= procs[i];
+            intFrag += holes[index];
+            cout << "P" << i << "\t\t" << procs[i] << "\t\t" << index << "\t\t" << holes[index] << endl;
+            loaded[i] = true;
         }
     }
     cout << endl;

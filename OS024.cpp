@@ -1,4 +1,4 @@
-/* Implementation of First In First Out Page Replacement Algorithm
+/* Implementation of Least Recently Used Page Replacement Algorithm
 
 Sample Input
 Pages: 7 0 1 2 0 3 0 4 2 3 0 3 2 1 2 0 1 7 0 1
@@ -11,7 +11,7 @@ Frames: 4
 #include <algorithm>
 using namespace std;
 
-void fifo(vector<int> &, vector<int> &, int, int);
+void lru(vector<int> &, vector<int> &, int, int);
 
 int main()
 {
@@ -30,12 +30,12 @@ int main()
     cin >> frameCount;
     cout << endl;
     vector<int> frames(frameCount, INT_MIN);
-    fifo(pages, frames, pageCount, frameCount);
+    lru(pages, frames, pageCount, frameCount);
 }
 
-void fifo(vector<int> &pages, vector<int> &frames, int pageCount, int frameCount)
+void lru(vector<int> &pages, vector<int> &frames, int pageCount, int frameCount)
 {
-    int pageFaults = 0, pageHits = 0, memHead = 0;
+    int pageFaults = 0, pageHits = 0;
     for (int i = 0; i < pageCount; i++)
     {
         auto itr = find(frames.begin(), frames.end(), pages[i]);
@@ -45,9 +45,18 @@ void fifo(vector<int> &pages, vector<int> &frames, int pageCount, int frameCount
         }
         else
         {
+            int mDistance = INT_MAX, fIndex;
+            for (int j = 0; j < frameCount; j++)
+            {
+                int distance = find(pages.rbegin() + (pages.size() - i - 1), pages.rend(), frames[j]).base() - pages.begin() - 1;
+                if (distance < mDistance)
+                {
+                    mDistance = distance;
+                    fIndex = j;
+                }
+            }
+            frames[fIndex] = pages[i];
             pageFaults++;
-            frames[memHead] = pages[i];
-            memHead = (memHead + 1) % frameCount;
         }
     }
     cout << "Page Hits: " << pageHits << endl;

@@ -1,68 +1,179 @@
-/* Implementation of Dinning Philosophers Problem */
+/* Implementation of Banker's Algorithm
+
+Sample Input
+Process   Allocation    Max Need    Remaining Need      Available Resources        Execution Order
+  P0:       0 1 0        7 5 3           7 4 3                  4 3 2                    P1
+  P1:       2 0 0        3 2 2           1 2 2                  6 4 3                    P3
+  P2:       3 0 2        9 0 2           6 0 2                  9 4 5                    P2
+  P3:       2 1 1        4 2 2           2 1 1                  9 5 5                    P0
+  P4:       0 0 2        5 3 3           5 3 1                  9 5 7                    P4
+
+Total Resources:        9 5 7
+Allocated Resources:    7 2 5
+Available Resources:    2 3 2
+*/
 
 #include <iostream>
 #include <vector>
-#include <thread>
-#include <mutex>
-#define N 5
+#include <iterator>
+#include <algorithm>
 using namespace std;
 
-vector<mutex> chopsticks(N);
+vector<int> totalRes;
+vector<vector<int>> allocations;
+vector<vector<int>> maxNeed;
+vector<vector<int>> remNeed;
+vector<int> availableRes;
 
-void philosopher(int);
-void eat(int);
-void think(int);
+void getTotalRes(int);
+void getAllocations(int, int);
+void getMaxNeed(int, int);
+void calcRemNeed(int, int);
+void calcAvailableRes(int, int);
+bool checkDeadlock(int, int);
 
 int main()
 {
-    vector<thread> threads;
-    for (int i = 0; i < N; i++)
+    int proCount, resCount;
+    cout << "Enter the No. of Processes: ";
+    cin >> proCount;
+    cout << endl;
+    cout << "Enter the No. of Resources: ";
+    cin >> resCount;
+    cout << endl;
+    getTotalRes(resCount);
+    getAllocations(proCount, resCount);
+    getMaxNeed(proCount, resCount);
+    calcRemNeed(proCount, resCount);
+    calcAvailableRes(proCount, resCount);
+    if (checkDeadlock(proCount, resCount))
     {
-        threads.push_back(thread(philosopher, i));
+        cout << endl;
+        cout << "Sequence Execution Failed! Deadlock Found!" << endl;
     }
-    for (auto &t : threads)
+    else
     {
-        t.join();
+        cout << endl;
+        cout << "Sequence Execution Completed! No Deadlock Found!" << endl;
     }
 }
 
-void philosopher(int id)
+void getTotalRes(int resCount)
 {
-    think(id);
-    this_thread::sleep_for(chrono::seconds(1));
-    while (true)
+    cout << "Enter the Total Available Resources: ";
+    for (int i = 0; i < resCount; i++)
     {
-        if (id & 1)
+        int value;
+        cin >> value;
+        totalRes.push_back(value);
+    }
+    cout << endl;
+}
+
+void getAllocations(int proCount, int resCount)
+{
+    cout << "Enter Already Aloocated Resources for each Process:" << endl;
+    cout << endl;
+    for (int i = 0; i < proCount; i++)
+    {
+        vector<int> values;
+        cout << "P" << i << ": ";
+        for (int j = 0; j < resCount; j++)
         {
-            chopsticks[(id + 1) % 5].lock();
-            printf("Philosopher %d Picked Up Chopstick!\n", id, (id + 1) % 5);
-            chopsticks[id].lock();
-            printf("Philosopher %d Picked Up Chopstick!\n", id, id);
+            int value;
+            cin >> value;
+            values.push_back(value);
         }
-        else
+        allocations.push_back(values);
+    }
+    cout << endl;
+}
+
+void getMaxNeed(int proCount, int resCount)
+{
+    cout << "Enter Max Need for each Process:" << endl;
+    cout << endl;
+    for (int i = 0; i < proCount; i++)
+    {
+        vector<int> values;
+        cout << "P" << i << ": ";
+        for (int j = 0; j < resCount; j++)
         {
-            chopsticks[id].lock();
-            printf("Philosopher %d Picked Up Chopstick!\n", id, id);
-            chopsticks[(id + 1) % 5].lock();
-            printf("Philosopher %d Picked Up Chopstick!\n", id, (id + 1) % 5);
+            int value;
+            cin >> value;
+            values.push_back(value);
         }
-        eat(id);
-        this_thread::sleep_for(chrono::seconds(1));
-        chopsticks[id].unlock();
-        printf("Philosopher %d Put Down Chopstick!\n", id, id);
-        chopsticks[(id + 1) % 5].unlock();
-        printf("Philosopher %d Put Down Chopstick!\n", id, (id + 1) % 5);
-        think(id);
-        this_thread::sleep_for(chrono::seconds(1));
+        maxNeed.push_back(values);
+    }
+    cout << endl;
+}
+
+void calcRemNeed(int proCount, int resCount)
+{
+    for (int i = 0; i < proCount; i++)
+    {
+        vector<int> values;
+        for (int j = 0; j < resCount; j++)
+        {
+            int value;
+            value = maxNeed[i][j] - allocations[i][j];
+            values.push_back(value);
+        }
+        remNeed.push_back(values);
     }
 }
 
-void eat(int id)
+void calcAvailableRes(int proCount, int resCount)
 {
-    printf("Philosopher %d is Eating!\n", id);
+    vector<int> busyRes(resCount, 0);
+    for (int i = 0; i < proCount; i++)
+    {
+        for (int j = 0; j < resCount; j++)
+        {
+            busyRes[j] += allocations[i][j];
+        }
+    }
+    for (int i = 0; i < resCount; i++)
+    {
+        int value;
+        value = totalRes[i] - busyRes[i];
+        availableRes.push_back(value);
+    }
 }
 
-void think(int id)
+bool checkDeadlock(int proCount, int resCount)
 {
-    printf("Philosopher %d is Thinking!\n", id);
+    int n = proCount;
+    vector<bool> executed(proCount, false);
+    cout << "Total Resources: ";
+    copy(totalRes.begin(), totalRes.end(), ostream_iterator<int>(cout, " "));
+    cout << endl << endl;
+    cout << "Available Resources: ";
+    copy(availableRes.begin(), availableRes.end(), ostream_iterator<int>(cout, " "));
+    cout << endl << endl;
+    cout << "Execution\tResources" << endl;
+    while (n--)
+    {
+        bool deadlock = true;
+        for (int i = 0; i < proCount; i++)
+        {
+
+            if (remNeed[i] <= availableRes && executed[i] == false)
+            {
+                transform(availableRes.begin(), availableRes.end(), allocations[i].begin(), availableRes.begin(), plus<int>());
+                fill(allocations[i].begin(), allocations[i].end(), 0);
+                cout << "    P" << i << "\t\t  ";
+                copy(availableRes.begin(), availableRes.end(), ostream_iterator<int>(cout, " "));
+                cout << endl;
+                executed[i] = true;
+                deadlock = false;
+                break;
+            }
+        }
+        if (deadlock == true)
+        {
+            break;
+        }
+    }
+    return n == -1 ? false : true;
 }

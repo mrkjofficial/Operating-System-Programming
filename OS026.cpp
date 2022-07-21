@@ -1,66 +1,47 @@
-/* Implementation of Least Recently Used Page Replacement Algorithm
+/* Implementation of First Come First Serve Disk Scheduling Algorithm
 
 Sample Input
-Pages: 7 0 1 2 0 3 0 4 2 3 0 3 2 1 2 0 1 7 0 1
-Frames: 4
+Requests: 82 170 43 140 24 16 190
+Head: 50
 */
 
 #include <iostream>
-#include <iomanip>
 #include <vector>
-#include <algorithm>
+#include <iterator>
+#define DISKSIZE 200
 using namespace std;
 
-void mru(vector<int> &, vector<int> &, int, int);
+void sstf(vector<int> &, int, int);
 
 int main()
 {
-    int pageCount, frameCount;
-    cout << "Enter the No. of Pages: ";
-    cin >> pageCount;
+    int reqCount, head;
+    cout << "Enter the No. of Requests: ";
+    cin >> reqCount;
     cout << endl;
-    vector<int> pages(pageCount);
-    cout << "Enter Page References: ";
-    for (int i = 0; i < pageCount; i++)
+    vector<int> rQueue(reqCount);
+    cout << "Enter Requests: ";
+    for (int i = 0; i < reqCount; i++)
     {
-        cin >> pages[i];
+        cin >> rQueue[i];
     }
     cout << endl;
-    cout << "Enter the No. of Frames: ";
-    cin >> frameCount;
+    cout << "Enter the R/W Head Position: ";
+    cin >> head;
     cout << endl;
-    vector<int> frames(frameCount, INT_MIN);
-    mru(pages, frames, pageCount, frameCount);
+    sstf(rQueue, head, reqCount);
 }
 
-void mru(vector<int> &pages, vector<int> &frames, int pageCount, int frameCount)
+void sstf(vector<int> &rQueue, int head, int reqCount)
 {
-    int pageFaults = 0, pageHits = 0;
-    for (int i = 0; i < pageCount; i++)
+    int seekCount = 0, curTrack;
+    for (int i = 0; i < reqCount; i++)
     {
-        auto itr = find(frames.begin(), frames.end(), pages[i]);
-        if (itr != frames.end())
-        {
-            pageHits++;
-        }
-        else
-        {
-            int mDistance = INT_MAX, fIndex;
-            for (int j = 0; j < frameCount; j++)
-            {
-                int distance = find(pages.rbegin() + (pages.size() - i - 1), pages.rend(), frames[j]).base() - pages.begin() - 1;
-                if (distance < mDistance)
-                {
-                    mDistance = distance;
-                    fIndex = j;
-                }
-            }
-            frames[fIndex] = pages[i];
-            pageFaults++;
-        }
+        curTrack = rQueue[i];
+        seekCount += abs(curTrack - head);
+        head = curTrack;
     }
-    cout << "Page Hits: " << pageHits << endl;
-    cout << "Page Faults: " << pageFaults << endl;
-    cout << setprecision(2) << fixed << "Page Hit Ratio: " << (double)pageHits / pageCount << endl;
-    cout << setprecision(2) << fixed << "Page Fault Ratio: " << (double)pageFaults / pageCount << endl;
+    cout << "Seek Movements: " << seekCount << endl;
+    cout << "Seek Sequence: ";
+    copy(rQueue.begin(), rQueue.end(), ostream_iterator<int>(cout, " "));
 }

@@ -1,179 +1,90 @@
-/* Implementation of Banker's Algorithm
+/* Implementation of Best Fit Memory Allocation Algorithm
 
 Sample Input
-Process   Allocation    Max Need    Remaining Need      Available Resources        Execution Order
-  P0:       0 1 0        7 5 3           7 4 3                  4 3 2                    P1
-  P1:       2 0 0        3 2 2           1 2 2                  6 4 3                    P3
-  P2:       3 0 2        9 0 2           6 0 2                  9 4 5                    P2
-  P3:       2 1 1        4 2 2           2 1 1                  9 5 5                    P0
-  P4:       0 0 2        5 3 3           5 3 1                  9 5 7                    P4
-
-Total Resources:        9 5 7
-Allocated Resources:    7 2 5
-Available Resources:    2 3 2
+Holes: 100 500 200 300 600
+Processes: 212 417 112 426
 */
 
 #include <iostream>
 #include <vector>
-#include <iterator>
-#include <algorithm>
+
 using namespace std;
 
-vector<int> totalRes;
-vector<vector<int>> allocations;
-vector<vector<int>> maxNeed;
-vector<vector<int>> remNeed;
-vector<int> availableRes;
+vector<int> holes;
+vector<int> procs;
 
-void getTotalRes(int);
-void getAllocations(int, int);
-void getMaxNeed(int, int);
-void calcRemNeed(int, int);
-void calcAvailableRes(int, int);
-bool checkDeadlock(int, int);
+void getHoles(int);
+void getProcs(int);
+void bestFit(int, int);
 
 int main()
 {
-    int proCount, resCount;
+    int holeCount, proCount;
+    cout << "Enter the No. of Holes: ";
+    cin >> holeCount;
+    cout << endl;
+    getHoles(holeCount);
+    cout << endl;
     cout << "Enter the No. of Processes: ";
     cin >> proCount;
     cout << endl;
-    cout << "Enter the No. of Resources: ";
-    cin >> resCount;
+    getProcs(proCount);
     cout << endl;
-    getTotalRes(resCount);
-    getAllocations(proCount, resCount);
-    getMaxNeed(proCount, resCount);
-    calcRemNeed(proCount, resCount);
-    calcAvailableRes(proCount, resCount);
-    if (checkDeadlock(proCount, resCount))
+    bestFit(holeCount, proCount);
+}
+
+void getHoles(int holeCount)
+{
+    cout << "Enter the size of each Hole: ";
+    for (int i = 0; i < holeCount; i++)
     {
-        cout << endl;
-        cout << "Sequence Execution Failed! Deadlock Found!" << endl;
-    }
-    else
-    {
-        cout << endl;
-        cout << "Sequence Execution Completed! No Deadlock Found!" << endl;
+        int size;
+        cin >> size;
+        holes.push_back(size);
     }
 }
 
-void getTotalRes(int resCount)
+void getProcs(int proCount)
 {
-    cout << "Enter the Total Available Resources: ";
-    for (int i = 0; i < resCount; i++)
-    {
-        int value;
-        cin >> value;
-        totalRes.push_back(value);
-    }
-    cout << endl;
-}
-
-void getAllocations(int proCount, int resCount)
-{
-    cout << "Enter Already Aloocated Resources for each Process:" << endl;
-    cout << endl;
+    cout << "Enter the size of each Process: ";
     for (int i = 0; i < proCount; i++)
     {
-        vector<int> values;
-        cout << "P" << i << ": ";
-        for (int j = 0; j < resCount; j++)
-        {
-            int value;
-            cin >> value;
-            values.push_back(value);
-        }
-        allocations.push_back(values);
+        int size;
+        cin >> size;
+        procs.push_back(size);
     }
-    cout << endl;
 }
 
-void getMaxNeed(int proCount, int resCount)
+void bestFit(int holeCount, int proCount)
 {
-    cout << "Enter Max Need for each Process:" << endl;
-    cout << endl;
+    int extFrag = 0, intFrag = 0;
+    vector<bool> loaded(proCount, false);
+    cout << "Process\t\tSize\t\tHole\t\tLeft Space" << endl;
     for (int i = 0; i < proCount; i++)
     {
-        vector<int> values;
-        cout << "P" << i << ": ";
-        for (int j = 0; j < resCount; j++)
+        int difference = INT_MAX, index;
+        for (int j = 0; j < holes.size(); j++)
         {
-            int value;
-            cin >> value;
-            values.push_back(value);
-        }
-        maxNeed.push_back(values);
-    }
-    cout << endl;
-}
-
-void calcRemNeed(int proCount, int resCount)
-{
-    for (int i = 0; i < proCount; i++)
-    {
-        vector<int> values;
-        for (int j = 0; j < resCount; j++)
-        {
-            int value;
-            value = maxNeed[i][j] - allocations[i][j];
-            values.push_back(value);
-        }
-        remNeed.push_back(values);
-    }
-}
-
-void calcAvailableRes(int proCount, int resCount)
-{
-    vector<int> busyRes(resCount, 0);
-    for (int i = 0; i < proCount; i++)
-    {
-        for (int j = 0; j < resCount; j++)
-        {
-            busyRes[j] += allocations[i][j];
-        }
-    }
-    for (int i = 0; i < resCount; i++)
-    {
-        int value;
-        value = totalRes[i] - busyRes[i];
-        availableRes.push_back(value);
-    }
-}
-
-bool checkDeadlock(int proCount, int resCount)
-{
-    int n = proCount;
-    vector<bool> executed(proCount, false);
-    cout << "Total Resources: ";
-    copy(totalRes.begin(), totalRes.end(), ostream_iterator<int>(cout, " "));
-    cout << endl << endl;
-    cout << "Available Resources: ";
-    copy(availableRes.begin(), availableRes.end(), ostream_iterator<int>(cout, " "));
-    cout << endl << endl;
-    cout << "Execution\tResources" << endl;
-    while (n--)
-    {
-        bool deadlock = true;
-        for (int i = 0; i < proCount; i++)
-        {
-
-            if (remNeed[i] <= availableRes && executed[i] == false)
+            if (holes[j] - procs[i] < difference && holes[j] - procs[i] >= 0)
             {
-                transform(availableRes.begin(), availableRes.end(), allocations[i].begin(), availableRes.begin(), plus<int>());
-                fill(allocations[i].begin(), allocations[i].end(), 0);
-                cout << "    P" << i << "\t\t  ";
-                copy(availableRes.begin(), availableRes.end(), ostream_iterator<int>(cout, " "));
-                cout << endl;
-                executed[i] = true;
-                deadlock = false;
-                break;
+                difference = holes[j] - procs[i];
+                index = j;
             }
         }
-        if (deadlock == true)
+        if (difference == INT_MAX)
         {
-            break;
+            extFrag += procs[i];
+            cout << "P" << i << "\t\t" << procs[i] << "\t\t" << "Not Allocated!" << endl;
+        }
+        else
+        {
+            holes[index] -= procs[i];
+            intFrag += holes[index];
+            cout << "P" << i << "\t\t" << procs[i] << "\t\t" << index << "\t\t" << holes[index] << endl;
+            loaded[i] = true;
         }
     }
-    return n == -1 ? false : true;
+    cout << endl;
+    cout << "Total Internal Fragmentation: " << intFrag << endl;
+    cout << "Total External Fragmentation: " << extFrag << endl;
 }

@@ -1,4 +1,4 @@
-/* Implementation of C-Scan (Circular-Elevator) Disk Scheduling Algorithm
+/* Implementation of C-Look Disk Scheduling Algorithm
 
 Sample Input
 Requests: 82 170 43 140 24 16 190
@@ -12,7 +12,7 @@ Head: 50
 #define DISKSIZE 200
 using namespace std;
 
-void cscan(vector<int> &, int, int);
+void clook(vector<int> &, int, int);
 
 int main()
 {
@@ -30,15 +30,13 @@ int main()
 	cout << "Enter the R/W Head Position: ";
 	cin >> head;
 	cout << endl;
-	cscan(rQueue, head, reqCount);
+	clook(rQueue, head, reqCount);
 }
 
-void cscan(vector<int> &rQueue, int head, int reqCount)
+void clook(vector<int> &rQueue, int head, int reqCount)
 {
 	int seekCount = 0, curTrack;
 	vector<int> left, right, seekSequence;
-	left.push_back(0);
-	right.push_back(DISKSIZE - 1);
 	for (int i = 0; i < reqCount; i++)
 	{
 		if (rQueue[i] < head)
@@ -59,8 +57,8 @@ void cscan(vector<int> &rQueue, int head, int reqCount)
 		seekCount += abs(curTrack - head);
 		head = curTrack;
 	}
-	head = 0;
-	seekCount += (DISKSIZE - 1);
+	seekCount += abs(head - left[0]);
+	head = left[0];
 	for (int i = 0; i < left.size(); i++)
 	{
 		curTrack = left[i];

@@ -1,51 +1,55 @@
-/* Implementation of Producer-Consumer Problem (Mutex Method) */
+/* Implementation of Readers-Writers Problem */
 
-#include <iostream>
-#include <thread>
-#include <mutex>
-#include <deque>
-#include <condition_variable>
+#include<iostream>
+#include<thread>
+#include<mutex>
 using namespace std;
 
-mutex m;
-condition_variable cv;
-deque<int> buffer;
-const int maxBufferSize = 50;
+int readCount = 0, sharedMemLoc = 0;
+mutex rMutex, wMutex;
 
-void consumer()
-{
-    while (true)
-    {
-        unique_lock<mutex> locker(m);
-        cv.wait(locker, [](){ return buffer.size() > 0; });
-        printf("Consumed: %d\n", buffer.front());
-        buffer.pop_front();
-        locker.unlock();
-        cv.notify_one();
-        this_thread::sleep_for(chrono::seconds(1));
-    }
-}
-
-void producer()
-{
-    int stock = 1;
-    while (true)
-    {
-        unique_lock<mutex> locker(m);
-        cv.wait(locker, [](){ return buffer.size() <= maxBufferSize; });
-        buffer.push_back(stock);
-        printf("Produced: %d\n", stock);
-        stock++;
-        locker.unlock();
-        cv.notify_one();
-        this_thread::sleep_for(chrono::seconds(1));
-    }
-}
+void reader();
+void writer();
 
 int main()
 {
-    thread pro(producer);
-    thread con(consumer);
-    pro.join();
-    con.join();
+    thread r(reader);
+    thread w(writer);
+    r.join();
+    w.join();
+}
+
+void reader()
+{
+    while(true)
+    {
+        rMutex.lock();
+        readCount++;
+        if(readCount == 1)
+        {
+            wMutex.lock();
+        }
+        rMutex.unlock();
+        printf("Reader reads %d!\n", sharedMemLoc);
+        rMutex.lock();
+        readCount--;
+        if(readCount == 0)
+        {
+            wMutex.unlock();
+        }
+        rMutex.unlock();
+        this_thread::sleep_for(chrono::seconds(1));
+    }
+}
+
+void writer()
+{
+    while(true)
+    {
+        wMutex.lock();
+        sharedMemLoc++;
+        printf("Writer writes %d!\n", sharedMemLoc);
+        wMutex.unlock();
+        this_thread::sleep_for(chrono::seconds(1));
+    }
 }

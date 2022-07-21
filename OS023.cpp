@@ -1,90 +1,71 @@
-/* Implementation of Worst Fit Memory Allocation Algorithm
+/* Implementation of Optimal Page Replacement Algorithm
 
 Sample Input
-Holes: 100 500 200 300 600
-Processes: 212 417 112 426
+Pages: 7 0 1 2 0 3 0 4 2 3 0 3 2 1 2 0 1 7 0 1
+Frames: 4
 */
 
 #include <iostream>
+#include <iomanip>
 #include <vector>
-
+#include <algorithm>
 using namespace std;
 
-vector<int> holes;
-vector<int> procs;
-
-void getHoles(int);
-void getProcs(int);
-void worstFit(int, int);
+void optimal(vector<int> &, vector<int> &, int, int);
 
 int main()
 {
-    int holeCount, proCount;
-    cout << "Enter the No. of Holes: ";
-    cin >> holeCount;
+    int pageCount, frameCount;
+    cout << "Enter the No. of Pages: ";
+    cin >> pageCount;
     cout << endl;
-    getHoles(holeCount);
-    cout << endl;
-    cout << "Enter the No. of Processes: ";
-    cin >> proCount;
-    cout << endl;
-    getProcs(proCount);
-    cout << endl;
-    worstFit(holeCount, proCount);
-}
-
-void getHoles(int holeCount)
-{
-    cout << "Enter the size of each Hole: ";
-    for (int i = 0; i < holeCount; i++)
+    vector<int> pages(pageCount);
+    cout << "Enter Page References: ";
+    for (int i = 0; i < pageCount; i++)
     {
-        int size;
-        cin >> size;
-        holes.push_back(size);
+        cin >> pages[i];
     }
+    cout << endl;
+    cout << "Enter the No. of Frames: ";
+    cin >> frameCount;
+    cout << endl;
+    vector<int> frames(frameCount, INT_MIN);
+    optimal(pages, frames, pageCount, frameCount);
 }
 
-void getProcs(int proCount)
+void optimal(vector<int> &pages, vector<int> &frames, int pageCount, int frameCount)
 {
-    cout << "Enter the size of each Process: ";
-    for (int i = 0; i < proCount; i++)
+    int pageFaults = 0, pageHits = 0;
+    for (int i = 0; i < pageCount; i++)
     {
-        int size;
-        cin >> size;
-        procs.push_back(size);
-    }
-}
-
-void worstFit(int holeCount, int proCount)
-{
-    int extFrag = 0, intFrag = 0;
-    vector<bool> loaded(proCount, false);
-    cout << "Process\t\tSize\t\tHole\t\tLeft Space" << endl;
-    for (int i = 0; i < proCount; i++)
-    {
-        int difference = INT_MIN, index;
-        for (int j = 0; j < holes.size(); j++)
+        auto itr = find(frames.begin(), frames.end(), pages[i]);
+        if (itr != frames.end())
         {
-            if (holes[j] - procs[i] > difference && holes[j] - procs[i] >= 0)
-            {
-                difference = holes[j] - procs[i];
-                index = j;
-            }
-        }
-        if (difference == INT_MIN)
-        {
-            extFrag += procs[i];
-            cout << "P" << i << "\t\t" << procs[i] << "\t\t" << "Not Allocated!" << endl;
+            pageHits++;
         }
         else
         {
-            holes[index] -= procs[i];
-            intFrag += holes[index];
-            cout << "P" << i << "\t\t" << procs[i] << "\t\t" << index << "\t\t" << holes[index] << endl;
-            loaded[i] = true;
+            int mDistance = INT_MIN, fIndex;
+            for (int j = 0; j < frameCount; j++)
+            {
+                int distance = find(pages.begin() + i + 1, pages.end(), frames[j]) - pages.begin();
+                if (distance == pageCount)
+                {
+                    fIndex = j;
+                    break;
+                }
+                else if (distance > mDistance)
+                {
+                    mDistance = distance;
+                    fIndex = j;
+                }
+            }
+            frames[fIndex] = pages[i];
+            pageFaults++;
         }
     }
-    cout << endl;
-    cout << "Total Internal Fragmentation: " << intFrag << endl;
-    cout << "Total External Fragmentation: " << extFrag << endl;
+    cout << "Page Hits: " << pageHits << endl;
+    cout << "Page Faults: " << pageFaults << endl;
+    cout << setprecision(2) << fixed << "Page Hit Ratio: " << (double)pageHits / pageCount << endl;
+    cout << setprecision(2) << fixed << "Page Fault Ratio: " << (double)pageFaults / pageCount << endl;
 }

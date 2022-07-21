@@ -24,44 +24,40 @@
 
 #### 12. Implementation of Highest Response Ratio Next Scheduling Algorithm
 
-#### 13. Implementation of Multilevel Queue Scheduling Algorithm
+#### 13. Implementation of Deadlock
 
-#### 14. Implementation of Multilevel Queue Feedback Scheduling Algorithm
+#### 14. Implementation of Producer-Consumer Problem (Peterson Method)
 
-#### 15. Implementation of Deadlock
+#### 15. Implementation of Producer-Consumer Problem (Mutex Method)
 
-#### 16. Implementation of Producer-Consumer Problem (Peterson Method)
+#### 16. Implementation of Dinning Philosophers Problem
 
-#### 17. Implementation of Producer-Consumer Problem (Mutex Method)
+#### 17. Implementation of Readers-Writers Problem
 
-#### 18. Implementation of Dinning Philosophers Problem
+#### 18. Implementation of Banker's Algorithm
 
-#### 19. Implementation of Readers-Writers Problem
+#### 19. Implementation of First Fit Memory Allocation Algorithm
 
-#### 20. Implementation of Banker's Algorithm
+#### 20. Implementation of Best Fit Memory Allocation Algorithm
 
-#### 21. Implementation of First Fit Memory Allocation Algorithm
+#### 21. Implementation of Worst Fit Memory Allocation Algorithm
 
-#### 22. Implementation of Best Fit Memory Allocation Algorithm
+#### 22. Implementation of First In First Out Page Replacement Algorithm
 
-#### 23. Implementation of Worst Fit Memory Allocation Algorithm
+#### 23. Implementation of Optimal Page Replacement Algorithm
 
-#### 24. Implementation of First In First Out Page Replacement Algorithm
+#### 24. Implementation of Least Recently Used Page Replacement Algorithm
 
-#### 25. Implementation of Optimal Page Replacement Algorithm
+#### 25. Implementation of Most Recently Used Page Replacement Algorithm
 
-#### 26. Implementation of Least Recently Used Page Replacement Algorithm
+#### 26. Implementation of First Come First Serve Disk Scheduling Algorithm
 
-#### 27. Implementation of Most Recently Used Page Replacement Algorithm
+#### 27. Implementation of Shortest Seek Time First Disk Scheduling Algorithm
 
-#### 28. Implementation of First Come First Serve Disk Scheduling Algorithm
+#### 28. Implementation of Scan (Elevator) Disk Scheduling Algorithm
 
-#### 29. Implementation of Shortest Seek Time First Disk Scheduling Algorithm
+#### 29. Implementation of C-Scan (Circular-Elevator) Disk Scheduling Algorithm
 
-#### 30. Implementation of Scan (Elevator) Disk Scheduling Algorithm
+#### 30. Implementation of Look Disk Scheduling Algorithm
 
-#### 31. Implementation of C-Scan (Circular-Elevator) Disk Scheduling Algorithm
-
-#### 32. Implementation of Look Disk Scheduling Algorithm
-
-#### 33. Implementation of C-Look Disk Scheduling Algorithm
+#### 31. Implementation of C-Look Disk Scheduling Algorithm
